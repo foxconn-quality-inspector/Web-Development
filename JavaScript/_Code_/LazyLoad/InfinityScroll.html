@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无限滚动</title>
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    .InfinityScroll {
+        position: relative;
+        margin: 30px;
+        width: 300px;
+        height: 500px;
+        overflow-y: auto;
+        border: 1px solid red;
+    }
+
+    .broaden {
+        width: 100%;
+    }
+
+    .show {
+        position: absolute;
+        top: 0px;
+        width: 100%;
+    }
+
+    .show>li {
+        margin: 10px 10px 0 10px;
+        height: 30px;
+        line-height: 30px;
+        background-color: seagreen;
+        color: white;
+        text-align: center;
+        list-style: none;
+    }
+</style>
+
+<body>
+    <div class="InfinityScroll">
+        <div class="broaden"></div>
+        <ul class="show"> </ul>
+    </div>
+</body>
+<script>
+    // 模拟100条数据，填充数组
+    var count = 0;
+    var list = Array.from({
+        length: 100
+    }, () => count++)
+    var liHeight = 30, // 单个li高度
+        liMarginTop = 10, // li的marginTop
+        viewHeight = 500, // 视口高度
+        ulLength = Math.ceil(viewHeight / (liHeight + liMarginTop)), // 可视范围内盛放的li个数
+        ulHeight = list.length * liHeight + (list.length + 1) * liMarginTop // 所有li高度和margin之和，broaden的高度
+
+    // 添加初始节点
+    list.slice(0, ulLength).map(item => {
+        var ulList = document.querySelector('.show')
+        var li = document.createElement('li')
+        li.className = 'item'
+        li.innerText = item
+        ulList.appendChild(li)
+    })
+
+    // 撑起滚动条
+    var broaden = document.querySelector('.broaden')
+    // 计算所有li的高度，预设置滚动条该滚动多少
+    broaden.setAttribute('style', `height:${ulHeight}px`)
+    // proxy通过数据改变页面，分离代码逻辑主体和分支
+    var UIState = {
+        ulList: list.slice(0, ulLength), // 可视范围内的列表
+        ulTop: 0 // 可视范围的列表的定位
+    }
+
+    var UIStateProxy = new Proxy(UIState, {
+        get: function (target, key) {
+            return target[key]
+        },
+        set: function (target, key, value) {
+            target[key] = value
+            switch (key) {
+                case 'ulList':
+                    var ulList = document.querySelector('.show')
+                    // 清空子节点
+                    while (ulList.hasChildNodes()) ulList.removeChild(ulList.firstChild)
+                    // 重新添加节点
+                    value.map(v => {
+                        var ulList = document.querySelector('.show')
+                        var li = document.createElement('li')
+                        li.className = 'item'
+                        li.innerText = v
+                        ulList.appendChild(li)
+                    })
+                    break;
+                case 'ulTop':
+                    // 设置ul的top
+                    var ulList = document.querySelector('.show')
+                    ulList.setAttribute('style', `top:${value}px`)
+                    break;
+
+                default:
+                    console.log('无此属性');
+                    break;
+            }
+        }
+    })
+    // 监听滚动条
+    var InfinityScroll = document.querySelector('.InfinityScroll')
+    InfinityScroll.addEventListener('scroll', () => {
+        // 获取滚动条滚动的高度
+        var scrollTop = InfinityScroll.scrollTop
+        // 设置ul的定位，因为根据滚动条滚动的内容设置ul的内容，
+        // 会导致只露出li一部分的时候会重新排版li，导致ul的定位偏大
+        UIStateProxy.ulTop = scrollTop - (scrollTop % (liHeight + liMarginTop))
+        // 重新获取li数组起点
+        var start = parseInt(scrollTop / (liHeight + liMarginTop))
+        UIStateProxy.ulList = list.slice(start, start + ulLength)
+    })
+</script>
+
+</html>

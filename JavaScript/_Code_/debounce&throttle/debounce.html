@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防抖</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        height: 300px;
+        line-height: 300px;
+        margin: 0 auto;
+        margin-top: 30px;
+        background-color: red;
+        text-align: center;
+        color: white;
+        font-size: 32px;
+    }
+</style>
+
+<body>
+    <div class="box"></div>
+</body>
+<script>
+    var box = document.querySelector('.box')
+    var num = 0
+    box.innerHTML = num
+
+    function handle(e) {
+        num++
+        box.innerHTML = num
+    }
+    // 回调函数，间隔，是否执行第一次回调函数
+    function debounce(fn, wait = 200, immediate = true) {
+        // 利用闭包保存定时器种子
+        let timer = null
+
+        return function () {
+            // time为空清除定时器种子，但是time还是有值
+            if (timer) clearTimeout(timer)
+            // 执行第一次回调函数，第一次执行时time为null
+            // 为了避免handle不能获取到MouseEvent鼠标事件需要重定向this
+            if (immediate && !timer) fn.apply(this, arguments)
+            timer = setTimeout(() => {
+                fn.apply(this, arguments)
+            }, wait)
+        }
+    }
+    
+    // 示例
+    box.addEventListener('mousemove', debounce(handle, 300, true))
+</script>
+
+</html>

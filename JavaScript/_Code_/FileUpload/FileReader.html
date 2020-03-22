@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileReader</title>
+</head>
+
+<body>
+    <div class="upload">上传文件</div>
+    <script>
+        var start_dom = document.querySelector('.upload')
+        start_dom.addEventListener('click', function () {
+            // 创建一个隐藏的input
+            var upFileInput = document.createElement('input')
+            upFileInput.setAttribute('type', 'file')
+            // 上传时可以选择多个文件
+            upFileInput.setAttribute('multiple', 'multiple')
+            upFileInput.style.display = "none"
+            document.body.appendChild(upFileInput)
+            upFileInput.click()
+            // 检测到有文件上传的时候上传文件
+            upFileInput.addEventListener('change', async function () {
+                var fileList = Object.values(upFileInput.files)
+                // 没有上传文件则跳出
+                if (fileList.length === 0) return
+
+                fileList.map(file => {
+                    var reader = new FileReader()
+                    reader.readAsArrayBuffer(file)
+                    reader.onload = function () {
+                        // FileReader.result；返回文件内容
+                        console.log(this.result)
+                        // 包裹在Blob对象中
+                        console.log(new Blob([this.result]))
+                        console.log('>>>>>>>>>>>>>>>>>>>>解析完一个文件>>>>>>>>>>>>>>>>>>>>')
+                    }
+                })
+                // 删除input
+                var inputParentNode = upFileInput.parentNode
+                inputParentNode.removeChild(upFileInput)
+            })
+        })
+    </script>
+    <style>
+        .upload {
+            width: 88px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            color: white;
+            background-color: #1a73e8;
+            cursor: pointer;
+        }
+    </style>
+</body>
+
+</html>

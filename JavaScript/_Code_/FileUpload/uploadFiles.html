@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件分片上传</title>
+</head>
+
+<body>
+    <div class="upload">上传文件</div>
+    <div class="cancel">取消上传</div>
+    <div class="file_info">
+        <table>
+            <tr>
+                <th>文件名称：</th>
+                <th>文件解析进度：</th>
+                <th>上传进度：</th>
+            </tr>
+            <tr>
+                <td span class="name">暂无文件上传</td>
+                <td class="parse_progress">等待中...</td>
+                <td class="upload_progress">等待中...</td>
+            </tr>
+        </table>
+    </div>
+</body>
+<script src="./spark-md5.js"></script>
+<script src="./uploadFiles.js"></script>
+<style>
+    .upload,
+    .cancel {
+        display: inline-block;
+        margin-left: 20px;
+        width: 88px;
+        height: 36px;
+        line-height: 36px;
+        text-align: center;
+        color: white;
+        background-color: #1a73e8;
+        cursor: pointer;
+    }
+
+    .cancel {
+        background-color: #ff4d4f;
+    }
+</style>
+
+</html>

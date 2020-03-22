@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节流</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        height: 300px;
+        line-height: 300px;
+        margin: 0 auto;
+        margin-top: 30px;
+        background-color: red;
+        text-align: center;
+        color: white;
+        font-size: 32px;
+    }
+</style>
+
+<body>
+    <div class="box"></div>
+</body>
+<script>
+    var box = document.querySelector('.box')
+    var num = 0
+    box.innerHTML = num
+
+    function handle(e) {
+        num++
+        box.innerHTML = num
+    }
+    //// 时间戳实现
+
+    // function throttle(fn, wait = 200) {
+    //     // 上一次函数触发时间
+    //     let prev = 0
+    //     return function () {
+    //         // 当前时间
+    //         let now = new Date()
+    //         // 大于时间差执行
+    //         if (now - prev > wait) {
+    //             fn.apply(this, arguments);
+    //             prev = now
+    //         }
+    //     }
+    // }
+
+    // 定时器实现
+    // function throttle(fn, wait = 200) {
+    //     let time = null
+    //     return function () {
+    //         // 不存在定时器种子说明setTimeout执行了
+    //         if (!time) {
+    //             time = setTimeout(() => {
+    //                 fn.apply(this, arguments)
+    //                 clearTimeout(time)
+    //                 time = null
+    //             }, wait);
+    //         }
+    //     }
+    // }
+
+    // 示例
+    box.addEventListener('mousemove', throttle(handle, 1000))
+</script>
+
+</html>

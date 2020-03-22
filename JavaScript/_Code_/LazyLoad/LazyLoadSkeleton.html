@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离屏内容使用占位资源</title>
+</head>
+
+<body>
+    <h1>离屏内容使用占位资源Demo</h1>
+    <ul class="list">
+        <li class="item">
+            <div class="skeleton" style="display: none;">
+                <h1>加载中...</h1>
+            </div>
+            <img src="./img.jpg" alt="英雄特纳尔一定要实现">
+            <h1>英雄特纳尔一定要实现</h1>
+        </li>
+    </ul>
+</body>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        overflow: hidden;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    ul {
+        margin: 0 auto;
+        padding: 10px;
+        width: 640px;
+        height: 620px;
+        overflow-y: auto;
+    }
+
+    li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 20px 20px 0;
+        padding: 10px;
+        height: 256px;
+        list-style: none;
+        cursor: pointer;
+    }
+
+    li:hover {
+        outline: 1px dashed red;
+    }
+
+    li>img {
+        height: 256px;
+    }
+
+    li>h1 {
+        color: red;
+    }
+
+
+    .skeletonContainer {
+        position: relative;
+    }
+
+    .skeletonContainer>.skeleton {
+        display: inline-block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        background-color: silver;
+    }
+
+    .skeletonContainer>.skeleton>h1 {
+        line-height: 276px;
+        text-align: center;
+        color: white;
+    }
+</style>
+<script>
+    // 初始化数据
+    var list = document.querySelector('.list')
+    for (let i = 0; i < 50; i++) {
+        let item = document.querySelector('.item').cloneNode(true)
+        list.appendChild(item)
+    }
+
+    var timeout = null
+    // 观察和可视范围是否有交集
+    var io = new IntersectionObserver((entries) => {
+        // 判断所有实例的显示状态
+        entries.map(item => {
+            if (item.isIntersecting) {
+                // 在可视范围内正常显示
+                item.target.classList.remove('skeletonContainer')
+            } else {
+                // 全部不可视后用占位元素代替
+                item.target.classList.add('skeletonContainer')
+            }
+        })
+    }, {
+        root: list,
+        threshold: [0, 1]
+    })
+
+    var itemList = Array.from(document.querySelectorAll('.item'))
+    // 观察所有的列表子项
+    itemList.map(item => io.observe(item))
+</script>
+
+</html>
